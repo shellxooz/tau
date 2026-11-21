@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TAU — паспорт похода</title>
+<meta name="description" content="TAU проверяет готовность группы к походу в горы: маршрут, прогноз на высоте и снаряжение каждого участника.">
+<meta name="theme-color" content="#17503a">
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/vendor/leaflet.css">
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/vendor/leaflet.js" defer></script>
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#view">К содержанию</a>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#/" aria-label="TAU — на главную"><img src="/static/icon.svg" alt="" width="30" height="30"><span>TAU</span></a>
+    <nav class="top-nav" aria-label="Разделы">
+      <a href="#/" data-nav="home">Главная</a>
+      <a href="#/routes" data-nav="routes">Маршруты</a>
+      <a href="#/trips" data-nav="trips">Мои походы</a>
+    </nav>
+    <div class="top-actions">
+      <a class="sos" href="tel:112" title="Позвонить в службу спасения 112">112</a>
+      <a class="btn small top-new" href="#/new">Новый поход</a>
+    </div>
+  </div>
+</header>
+<main id="view" class="wrap" tabindex="-1"><p class="loading">Загружаем…</p></main>
+<footer class="foot wrap">
+  <p class="foot-links"><a href="#/propose">Предложить маршрут</a><a href="#/moderation">Модерация маршрутов</a></p>
+  <p><b>TAU — учебный прототип.</b> Погода — расчётный прогноз Open-Meteo. Координаты и высоты маршрутов приблизительные. Приложение не отслеживает группу, не вызывает спасателей и ничего не отправляет в МЧС. При угрозе жизни звоните 112.</p>
+</footer>
+<nav class="tabbar" aria-label="Разделы">
+  <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.500 12 4l9 7.500"/><path d="M5.500 10v9.500h13V10"/></svg>Главная</a>
+  <a href="#/routes" data-nav="routes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2.500 19 6.500-11 4 6 2.500-3.500 6 8.500z"/></svg>Маршруты</a>
+  <a href="#/new" data-nav="new" class="tab-new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Поход</a>
+  <a href="#/trips" data-nav="trips"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 8V6a3 3 0 0 1 6 0v2M9 14h6"/></svg>Мои походы</a>
+</nav>
+<div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
