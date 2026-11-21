@@ -69,7 +69,7 @@ def main():
         problems += [f'{sc["id"]}: пропущен {c}' for c in missed] + [f'{sc["id"]}: ложная тревога {c}' for c in extra]
 
     pct = lambda a, b: f'{100 * a / b:.0f} %' if b else 'н/д'
-    lines = ['# Результаты оценки аудитора TAU', '', f'Режим: {"ИИ + правила (" + tau_ai.current_model() + ")" if args.ai else "только движок правил"}. Сценариев: {len(SCENARIOS)}.', '',
+    lines = ['# Результаты оценки аудитора GoTAU', '', f'Режим: {"ИИ + правила (" + tau_ai.current_model() + ")" if args.ai else "только движок правил"}. Сценариев: {len(SCENARIOS)}.', '',
              '| Метрика | Значение |', '|---|---|',
              f'| Полнота: найдено обязательных рисков | {must_hit} из {must_total} ({pct(must_hit, must_total)}) |',
              f'| Ложные тревоги по запрещённым кодам | {false_alarm} из {not_total} ({pct(false_alarm, not_total)}) |']

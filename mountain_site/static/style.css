@@ -1,4 +1,4 @@
-/* TAU — оформление. Цвета заданы переменными: светлая тема по умолчанию, тёмная по настройке системы. */
+/* GoTAU — оформление. Цвета заданы переменными: светлая тема по умолчанию, тёмная по настройке системы. */
 :root {
   --bg: #f3f0e8; --surface: #fffdf8; --surface-2: #ebe7dc; --ink: #16241d; --muted: #5b6961; --line: #dcd6c7;
   --brand: #17503a; --brand-hover: #0f3d2b; --on-brand: #ffffff; --brand-soft: #dcebe1; --accent: #e0752d;
@@ -359,6 +359,12 @@ body { overflow-wrap: break-word; }
 .stack, .tab-body, .members, .page-head, .rec, .route-body, .trip-main, .verdict, .verdict-main, .hero-in, .route-hero-in, .pick-body, .field { grid-template-columns: minmax(0, 1fr); }
 .btn { white-space: normal; text-align: center; padding-top: 8px; padding-bottom: 8px; line-height: 1.25; }
 .chip { white-space: normal; }
+.two, .three { grid-template-columns: minmax(0, 1fr); }
+/* iPhone: поля даты и времени по умолчанию шире своей рамки и центрируют текст */
+input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; text-align: left; }
+input::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.5em; }
+input, select, textarea { max-width: 100%; }
+.inline { flex-wrap: wrap; }
 .wx-head { gap: 4px 12px; flex-wrap: wrap; }
 .evidence li { align-items: baseline; }
 .evidence b { flex: none; max-width: 55%; }

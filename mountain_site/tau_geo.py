@@ -194,7 +194,7 @@ def fetch_elevations(points, per_point_pause=0.1, retries=6):
     for start in range(0, len(missing), 100):
         chunk = missing[start:start + 100]
         query = urllib.parse.urlencode({'latitude': ','.join(f'{p[0]:.4f}' for p in chunk), 'longitude': ','.join(f'{p[1]:.4f}' for p in chunk)})
-        request = urllib.request.Request(f'{ELEVATION_URL}?{query}', headers={'User-Agent': 'TAU-prototype'})
+        request = urllib.request.Request(f'{ELEVATION_URL}?{query}', headers={'User-Agent': 'GoTAU-prototype'})
         for attempt in range(retries):
             try:
                 with urllib.request.urlopen(request, timeout=30) as response:

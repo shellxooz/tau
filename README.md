@@ -1,8 +1,8 @@
-# TAU — trip passport with AI-assisted readiness check
+# GoTAU — trip passport with AI-assisted readiness check
 
 Student project for StartUp Battle — IT FEST 2026 (Kazakhstan). Team: German Shegay, Sofiya Kopotilova, Ashraf Daurov.
 
-TAU helps the organizer of a mountain hike near Almaty check whether the group is ready for a specific route on a specific day. It combines the real forecast for the route's start and highest point, terrain from the GPS track and deterministic safety rules. An AI model (Claude or OpenAI) explains risks for specific people and builds packing lists; every AI claim is checked against the data, and the organizer accepts or rejects each recommendation.
+GoTAU helps the organizer of a mountain hike near Almaty check whether the group is ready for a specific route on a specific day. It combines the real forecast for the route's start and highest point, terrain from the GPS track and deterministic safety rules. An AI model (Claude or OpenAI) explains risks for specific people and builds packing lists; every AI claim is checked against the data, and the organizer accepts or rejects each recommendation.
 
 ## Run
 

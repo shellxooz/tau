@@ -1,18 +1,18 @@
 'use strict';
-/* TAU — интерфейс паспорта похода. Экраны переключаются по адресу после «#/». */
+/* GoTAU — интерфейс паспорта похода. Экраны переключаются по адресу после «#/». */
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const view = $('#view');
 const S = { routes: [], ai: { enabled: false, text: '' }, trip: null, tab: 'risks', filter: 'all', source: 'all', query: '', draft: null, step: 1, tracks: {}, maps: [] };
-const SOURCES = { all: 'Все источники', osm: 'OpenStreetMap', tau: 'Каталог TAU', user: 'От пользователей' };
-const SOURCE_BADGE = { osm: ['info', 'OpenStreetMap · трек'], tau: ['plain', 'Каталог TAU · примерно'], user: ['ok', 'От пользователя · проверен'] };
+const SOURCES = { all: 'Все источники', osm: 'OpenStreetMap', tau: 'Каталог GoTAU', user: 'От пользователей' };
+const SOURCE_BADGE = { osm: ['info', 'OpenStreetMap · трек'], tau: ['plain', 'Каталог GoTAU · примерно'], user: ['ok', 'От пользователя · проверен'] };
 
 const GEAR = { warm_layer: 'Тёплый слой', shell: 'Куртка от ветра и дождя', boots: 'Треккинговая обувь', headlamp: 'Налобный фонарь', traction: 'Ледоступы', first_aid: 'Аптечка', water: 'Вода 1,5 л', power: 'Павербанк и офлайн-карта', helmet: 'Шлем' };
 const EXPERIENCE = { novice: 'Новичок', some: 'Есть опыт', expert: 'Опытный' };
 const AGE = { adult: '18–59 лет', teen: '14–17 лет', child: 'до 14 лет', senior: '60 лет и старше' };
 const BULKY = { none: 'Без крупного груза', ski: 'Лыжи или сноуборд', bike: 'Велосипед', pack: 'Большой рюкзак' };
 const SEVERITY = { critical: 'Критично', warning: 'Важно', info: 'К сведению' };
-const SOURCE = { ai: 'Заметил ИИ', rules: 'Правило TAU', 'ai+rules': 'Правило TAU, объяснил ИИ' };
+const SOURCE = { ai: 'Заметил ИИ', rules: 'Правило GoTAU', 'ai+rules': 'Правило GoTAU, объяснил ИИ' };
 const ACTIVITY = { all: 'Все', hiking: 'Пешком', cycling: 'На велосипеде', skiing: 'На лыжах' };
 const STATUS_TONE = { planned: 'info', active: 'ok', done: 'plain', cancelled: 'plain' };
 
@@ -55,7 +55,7 @@ function toast(text) { const el = $('#toast'); el.textContent = text; el.hidden 
 async function api(path, payload) {
   let res;
   try { res = await fetch(path, payload === undefined ? undefined : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); }
-  catch (error) { throw new Error('Нет связи с сервером TAU. Проверьте, что он запущен'); }
+  catch (error) { throw new Error('Нет связи с сервером GoTAU. Проверьте, что он запущен'); }
   const body = await res.json();
   if (!res.ok) throw new Error(body.error || 'Не удалось выполнить запрос');
   return body;
@@ -177,7 +177,7 @@ async function viewHome() {
   const trips = await api('/api/trips');
   const next = trips.find(t => t.status === 'planned' || t.status === 'active');
   view.innerHTML = `<section class="hero">${HERO_ART}<div class="hero-in"><p class="over light">Алматы · Иле-Алатау</p><h1>Проверьте группу до&nbsp;выхода в&nbsp;горы</h1>
-    <p class="lead">TAU сверит маршрут, прогноз на высоте и рюкзак каждого участника — и подскажет, кому чего не хватает.</p>
+    <p class="lead">GoTAU сверит маршрут, прогноз на высоте и рюкзак каждого участника — и подскажет, кому чего не хватает.</p>
     <div class="row"><a class="btn light" href="#/new">Собрать поход ${icon('right')}</a><a class="btn glass" href="#/routes">Выбрать маршрут</a></div></div></section>
   ${next ? `<section class="block"><div class="block-head"><h2>Ближайший поход</h2><a class="link" href="#/trips">Все походы ${icon('right')}</a></div>${tripCard(next)}</section>` : ''}
   <section class="block"><h2>Как это работает</h2><ol class="how">
@@ -202,7 +202,7 @@ function viewRoutes() {
     <div class="tools">${pills(ACTIVITY, S.filter, 'filter', 'Вид активности')}<input id="q" class="search" type="search" placeholder="Найти по названию" aria-label="Найти маршрут" value="${esc(S.query)}"></div>
     <div class="tools">${pills(SOURCES, S.source, 'source', 'Источник')}</div>
     <div id="route-grid" class="grid">${routeGrid()}</div>
-    <p class="note">Маршруты OpenStreetMap: данные © участники OpenStreetMap (лицензия ODbL). На местности TAU их не проверял.</p>`;
+    <p class="note">Маршруты OpenStreetMap: данные © участники OpenStreetMap (лицензия ODbL). На местности GoTAU их не проверял.</p>`;
 }
 async function loadRouteWeather(id, day) {
   const box = $('#route-weather'); if (!box) return;
@@ -220,7 +220,7 @@ function viewRoute(id) {
     <section class="block"><h2>Карта${r.has_track ? ' и рельеф' : ''}</h2><div id="route-map" class="card pad"><p class="loading">Загружаем карту…</p></div></section>
     <div class="callout">${icon('alert')}<div>Это не навигатор: офлайн-карты и GPS здесь нет. В горы берите офлайн-карту в телефоне${r.has_track ? ' и трек, сверенный с тем, кто ходил этот маршрут' : ''}.</div></div>
     <section class="block"><div class="block-head"><h2>Прогноз на маршруте</h2><label class="inline">День <input id="wx-date" type="date" value="${localDay()}" min="${localDay()}" max="${localDay(15)}" data-route="${r.id}"></label></div><div id="route-weather" class="card pad"></div></section>
-    <div class="cta"><div><h2>Идёте сюда?</h2><p class="muted">Соберите группу, и TAU проверит её готовность под прогноз на этот день.</p></div><a class="btn" href="#/new/${r.id}">Собрать поход сюда ${icon('right')}</a></div>`;
+    <div class="cta"><div><h2>Идёте сюда?</h2><p class="muted">Соберите группу, и GoTAU проверит её готовность под прогноз на этот день.</p></div><a class="btn" href="#/new/${r.id}">Собрать поход сюда ${icon('right')}</a></div>`;
   loadRouteWeather(r.id, localDay());
   routeMapBlock(r, '#route-map');
 }
@@ -228,15 +228,15 @@ function viewRoute(id) {
 /* ---------- предложить маршрут ---------- */
 function viewPropose() {
   view.innerHTML = `<a class="back" href="#/routes">${icon('left')}Маршруты</a>
-    <div class="page-head"><h1>Предложить маршрут</h1><p class="muted">Загрузите свой трек в формате GPX: его можно выгрузить из часов, Strava, Wikiloc или приложения, в котором вы записывали поход. TAU посчитает длину, набор высоты и крутизну, а модератор проверит маршрут перед публикацией.</p></div>
+    <div class="page-head"><h1>Предложить маршрут</h1><p class="muted">Загрузите свой трек в формате GPX: его можно выгрузить из часов, Strava, Wikiloc или приложения, в котором вы записывали поход. GoTAU посчитает длину, набор высоты и крутизну, а модератор проверит маршрут перед публикацией.</p></div>
     <form id="propose" class="card pad" novalidate>
       <label class="field">Файл трека (.gpx, до 5 МБ)<input type="file" name="file" accept=".gpx,application/gpx+xml" required></label>
       <label class="field">Название<input name="name" maxlength="80" placeholder="Например: пик Кумбель через Кок-Жайляу" required></label>
       <div class="field"><span class="label">Вид активности</span><div class="seg">${Object.entries({ hiking: 'Пешком', cycling: 'Велосипед', skiing: 'Лыжи' }).map(([k, v], i) => `<label><input type="radio" name="activity" value="${k}" ${i ? '' : 'checked'}><span>${v}</span></label>`).join('')}</div></div>
-      <div class="two"><label class="field">Район<input name="area" maxlength="60" placeholder="Например: Иле-Алатау"></label><label class="field">Длина по вашим данным, км <span class="muted">(не обязательно)</span><input name="claimed_km" type="number" min="0" step="0.1" inputmode="decimal"></label></div>
+      <div class="two"><label class="field">Район<input name="area" maxlength="60" placeholder="Например: Иле-Алатау"></label><label class="field"><span>Длина по вашим данным, км <span class="muted">(не обязательно)</span></span><input name="claimed_km" type="number" min="0" step="0.1" inputmode="decimal"></label></div>
       <label class="field">Описание<textarea name="description" rows="5" maxlength="1500" placeholder="Где начало тропы и как туда добраться, есть ли вода, опасные места, когда лучше идти"></textarea></label>
-      <label class="field">Как вас подписать <span class="muted">(не обязательно)</span><input name="author" maxlength="60" autocomplete="off"></label>
-      <label class="consent"><input type="checkbox" name="consent"><span>Трек записан мной или я имею право им поделиться. Разрешаю TAU опубликовать маршрут после проверки.</span></label>
+      <label class="field"><span>Как вас подписать <span class="muted">(не обязательно)</span></span><input name="author" maxlength="60" autocomplete="off"></label>
+      <label class="consent"><input type="checkbox" name="consent"><span>Трек записан мной или я имею право им поделиться. Разрешаю GoTAU опубликовать маршрут после проверки.</span></label>
       <p class="note">Из файла сохраняются только координаты и высоты. Время записи, имя устройства и другие данные файла не сохраняются.</p>
       <p id="form-error" class="form-error" role="alert"></p>
       <button class="btn" type="submit">${icon('up')}Отправить на проверку</button>
@@ -269,7 +269,7 @@ async function viewProposal(id) {
   view.innerHTML = `<a class="back" href="#/moderation">${icon('left')}Все предложения</a>
     <div class="page-head"><div class="chips">${chip(PROPOSAL_TONE[p.status], p.status_label)}${chip('plain', esc(p.activityLabel))}</div><h1>${esc(p.name)}</h1><p class="muted">${esc(p.area || 'Район не указан')}${p.author ? ' · прислал(а) ' + esc(p.author) : ''}</p></div>
     <div class="tiles"><div><span>Длина по треку</span><b>${s.distance_km} км</b></div><div><span>Набор</span><b>${s.ascent_m} м</b></div><div><span>Старт</span><b>${s.start_elev} м</b></div><div><span>Верхняя точка</span><b>${s.max_elev} м</b></div><div><span>Сложность (оценка)</span><b>${s.ascent_m < 500 && s.distance_km <= 10 && s.max_elev < 2500 ? 'Лёгкий' : s.ascent_m < 1100 && s.max_elev < 3200 ? 'Средний' : 'Сложный'}</b></div></div>
-    ${p.checks.length ? `<section class="block"><h2>Что проверить модератору</h2><div class="stack">${p.checks.map(c => `<div class="callout ${c.level === 'warning' ? 'warn' : ''}">${icon(c.level === 'warning' ? 'alert' : 'spark')}<div>${esc(c.text)}</div></div>`).join('')}</div><p class="note">Подсказки собраны правилами TAU по треку и описанию. Решение принимает человек.</p></section>` : ''}
+    ${p.checks.length ? `<section class="block"><h2>Что проверить модератору</h2><div class="stack">${p.checks.map(c => `<div class="callout ${c.level === 'warning' ? 'warn' : ''}">${icon(c.level === 'warning' ? 'alert' : 'spark')}<div>${esc(c.text)}</div></div>`).join('')}</div><p class="note">Подсказки собраны правилами GoTAU по треку и описанию. Решение принимает человек.</p></section>` : ''}
     <section class="block"><h2>Трек и рельеф</h2><div class="card pad"><div class="map" id="proposal-map"></div>${profileChart(p.profile)}${terrainBlock(p.terrain)}</div></section>
     ${p.description ? `<section class="block"><h2>Описание автора</h2><blockquote>${esc(p.description)}</blockquote></section>` : ''}
     <section class="block">${decide}</section>`;
@@ -304,7 +304,7 @@ function renderWizard() {
     body = `<section class="block"><h2>Куда идёте?</h2><div class="pick">${S.routes.map(x => `<label class="pick-item"><input type="radio" name="route" value="${x.id}" ${x.id === d.route_id ? 'checked' : ''}><span class="pick-body"><b>${esc(x.name)}</b><small>${esc(x.activityLabel)} · ${x.distance} км · ${x.hours} ч · до ${x.max_elev} м · ${esc(x.level)}</small></span></label>`).join('')}</div></section>
     <section class="block"><h2>Когда?</h2><div class="card pad"><div class="three"><label class="field">Дата<input type="date" data-d="start_date" value="${d.start_date}" min="${localDay()}"></label><label class="field">Выход<input type="time" data-d="start_time" value="${d.start_time}"></label><label class="field">Контрольное возвращение<input type="time" data-d="return_time" value="${d.return_time}"></label></div>
     <p class="note">Контрольное время — к которому группа точно должна вернуться. Если возвращение не отмечено, близкие по ссылке увидят предупреждение и порядок действий.</p>
-    <label class="field">Название похода <span class="muted">(не обязательно)</span><input data-d="title" maxlength="80" placeholder="Например: суббота с друзьями" value="${esc(d.title)}"></label></div></section>`;
+    <label class="field"><span>Название похода <span class="muted">(не обязательно)</span></span><input data-d="title" maxlength="80" placeholder="Например: суббота с друзьями" value="${esc(d.title)}"></label></div></section>`;
   } else if (S.step === 2) {
     body = `<section class="block"><h2>Кто отвечает за группу?</h2><div class="card pad"><div class="two"><label class="field">Имя организатора<input data-d="organizer" maxlength="60" placeholder="Кто ведёт группу" value="${esc(d.organizer)}" autocomplete="off"></label><label class="field">Телефон<input type="tel" data-d="organizer_phone" maxlength="25" placeholder="+7 000 000 00 00" value="${esc(d.organizer_phone)}" autocomplete="off"></label></div>
     <p class="note">Имя и телефон нужны для текста уведомления в ДЧС. В модель ИИ они не передаются.</p></div></section>
@@ -315,7 +315,7 @@ function renderWizard() {
     body = `<section class="block"><div class="card pad"><p class="over">${esc(r.area)} · ${esc(r.activityLabel)}</p><h2>${esc(title)}</h2>
     <dl class="facts"><div><dt>Маршрут</dt><dd>${esc(r.name)}, ${r.distance} км, до ${r.max_elev} м</dd></div><div><dt>Когда</dt><dd>${niceDate(d.start_date)}, выход в ${d.start_time}</dd></div><div><dt>Контрольное возвращение</dt><dd>${d.return_time || 'не задано'}</dd></div><div><dt>Организатор</dt><dd>${esc(d.organizer || 'не указан')}</dd></div></dl>
     <h3>Группа</h3><ul class="people">${d.members.map(m => `<li><span class="ava">${esc(m.name.trim().charAt(0).toUpperCase())}</span><div><b>${esc(m.name)}</b><small>${EXPERIENCE[m.experience]} · ${AGE[m.age_group]} · вещей отмечено: ${m.gear.length} из ${Object.keys(GEAR).length}</small></div></li>`).join('')}</ul></div>
-    <div class="callout">${icon('shield')}<div><b>Что будет с данными.</b> Поход хранится только на этом компьютере. ${S.ai.enabled ? 'В модель ИИ уйдут опыт, возрастная группа и снаряжение под метками «Участник 1, 2…»: без имён и телефонов.' : 'ИИ сейчас не подключён, проверку выполнят правила TAU. Когда ИИ включат, в модель будут уходить только обезличенные параметры без имён и телефонов.'} Медицинские сведения не вводите.</div></div></section>`;
+    <div class="callout">${icon('shield')}<div><b>Что будет с данными.</b> Поход хранится только на этом компьютере. ${S.ai.enabled ? 'В модель ИИ уйдут опыт, возрастная группа и снаряжение под метками «Участник 1, 2…»: без имён и телефонов.' : 'ИИ сейчас не подключён, проверку выполнят правила GoTAU. Когда ИИ включат, в модель будут уходить только обезличенные параметры без имён и телефонов.'} Медицинские сведения не вводите.</div></div></section>`;
   }
   const nav = `<p id="form-error" class="form-error" role="alert"></p><div class="wnav">${S.step > 1 ? `<button type="button" class="btn outline" data-act="wizard-back">${icon('left')}Назад</button>` : '<span></span>'}
     ${S.step < 3 ? `<button type="button" class="btn" data-act="wizard-next">Дальше ${icon('right')}</button>` : `<button type="button" class="btn" data-act="wizard-save">${d.id ? 'Сохранить и проверить заново' : 'Сохранить и проверить готовность'} ${icon('right')}</button>`}</div>`;
@@ -354,7 +354,7 @@ async function viewTrips() {
   const trips = await api('/api/trips');
   const active = trips.filter(t => t.status === 'planned' || t.status === 'active'), past = trips.filter(t => t.status === 'done' || t.status === 'cancelled');
   view.innerHTML = `<div class="page-head row-between"><h1>Мои походы</h1><a class="btn" href="#/new">${icon('plus')}Новый поход</a></div>
-    ${trips.length ? '' : empty('Пока ни одного похода', 'Соберите первый: маршрут, группа, рюкзаки. TAU проверит готовность и подготовит ссылку для близких.', '<a class="btn" href="#/new">Собрать поход</a>')}
+    ${trips.length ? '' : empty('Пока ни одного похода', 'Соберите первый: маршрут, группа, рюкзаки. GoTAU проверит готовность и подготовит ссылку для близких.', '<a class="btn" href="#/new">Собрать поход</a>')}
     ${active.length ? `<section class="block"><h2>Впереди</h2><div class="stack">${active.map(tripCard).join('')}</div></section>` : ''}
     ${past.length ? `<section class="block"><h2>Прошедшие</h2><div class="stack">${past.map(tripCard).join('')}</div></section>` : ''}
     <p class="note">Походы хранятся только в базе на этом компьютере. Сохранение похода не является регистрацией в МЧС.</p>`;
@@ -374,7 +374,7 @@ function nextStep() {
   if (t.status === 'cancelled') return { title: 'Поход отменён', text: 'Его можно вернуть в подготовку.', action: '<button class="btn outline" data-act="status" data-value="planned">Вернуть в подготовку</button>' };
   if (t.status === 'done') return { title: 'Группа вернулась', text: 'Поход завершён. Близкие видят это по ссылке.', action: '' };
   if (t.overdue) return { tone: 'crit', title: 'Контрольное время прошло', text: 'Близкие по ссылке уже видят предупреждение. Если группа вернулась, отметьте это.', action: `<button class="btn" data-act="status" data-value="done">${icon('check')}Мы вернулись</button>` };
-  if (!s.a) return { title: 'Проверьте готовность группы', text: 'TAU возьмёт прогноз на день похода и сверит его с маршрутом и рюкзаками участников.', action: `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>` };
+  if (!s.a) return { title: 'Проверьте готовность группы', text: 'GoTAU возьмёт прогноз на день похода и сверит его с маршрутом и рюкзаками участников.', action: `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>` };
   if (s.stale) return { tone: 'warn', title: 'Поход изменился после проверки', text: 'Замечания ниже могут быть уже неактуальны. Запустите проверку ещё раз.', action: `<button class="btn" data-act="audit">${icon('refresh')}Проверить заново</button>` };
   if (s.undecided) return { title: `Разберите замечания: осталось ${s.undecided}`, text: 'По каждому важному замечанию решите: принимаете рекомендацию или отклоняете. Так видно, что решение принял человек.', action: '<button class="btn" data-act="tab" data-value="risks">К замечаниям</button>' };
   if (!t.confirmed) return { title: 'Подтвердите паспорт', text: 'После подтверждения сводка подготовки станет видна близким по ссылке.', action: `<button class="btn" data-act="confirm">${icon('check')}Подтвердить паспорт</button>` };
@@ -394,8 +394,8 @@ function verdict() {
   const tone = s.critical ? 'crit' : s.warning ? 'warn' : 'ok';
   const title = s.critical ? `Есть критичные замечания: ${s.critical}` : s.warning ? `Есть что поправить до выхода: ${s.warning}` : 'Серьёзных замечаний нет';
   const mode = a.mode === 'ai'
-    ? `<p class="mode">${icon('spark')}<span><b>Сгенерировано ИИ</b> (${esc(a.model)}) и проверено правилами TAU, ${esc(a.generated_at)}. Это подсказка, а не решение.</span></p>`
-    : `<p class="mode">${icon('shield')}<span><b>Проверено правилами TAU, без ИИ</b>, ${esc(a.generated_at)}.${a.ai_error ? ' Причина: ' + esc(a.ai_error) + '.' : ''}</span></p>`;
+    ? `<p class="mode">${icon('spark')}<span><b>Сгенерировано ИИ</b> (${esc(a.model)}) и проверено правилами GoTAU, ${esc(a.generated_at)}. Это подсказка, а не решение.</span></p>`
+    : `<p class="mode">${icon('shield')}<span><b>Проверено правилами GoTAU, без ИИ</b>, ${esc(a.generated_at)}.${a.ai_error ? ' Причина: ' + esc(a.ai_error) + '.' : ''}</span></p>`;
   return `<section class="verdict ${tone}"><div class="verdict-main"><p class="over">Итог проверки</p><h2>${title}</h2><p>${(s.critical || s.warning) && !s.undecided ? 'Организатор разобрал все замечания.' : s.critical || s.warning ? 'Посмотрите, кого они касаются и что с этим сделать.' : 'По данным прогноза и рюкзакам группа подготовлена.'} Идти или нет — решает организатор.</p>${mode}</div>
     <div class="tiles compact"><div><span>В пути</span><b>≈ ${a.estimate.duration_h} ч</b></div><div><span>Финиш</span><b>≈ ${a.estimate.finish_time}</b></div><div><span>Контроль</span><b>${t.return_time || 'нет'}</b></div></div></section>`;
 }
@@ -409,7 +409,7 @@ function recCard(r) {
 }
 function tabRisks() {
   const s = tripState(), a = s.a;
-  if (!a) return empty('Проверка ещё не запускалась', `TAU возьмёт реальный прогноз на высоте маршрута, посчитает время в пути и сверит всё это с рюкзаками участников. ${S.ai.enabled ? 'Объяснения напишет ИИ, а правила TAU проверят его ответ.' : 'Сейчас ИИ не подключён, поэтому проверку выполнят правила TAU.'}`, `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>`);
+  if (!a) return empty('Проверка ещё не запускалась', `GoTAU возьмёт реальный прогноз на высоте маршрута, посчитает время в пути и сверит всё это с рюкзаками участников. ${S.ai.enabled ? 'Объяснения напишет ИИ, а правила GoTAU проверят его ответ.' : 'Сейчас ИИ не подключён, поэтому проверку выполнят правила GoTAU.'}`, `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>`);
   const v = a.validation;
   const check = a.mode === 'ai' ? `<p class="note">Проверка ответа ИИ: получено замечаний — ${v.received}; отброшено без опоры на данные — ${v.dropped_no_evidence}; отброшено из-за чисел, которых нет в данных, — ${v.dropped_numbers}; добавлено из правил — ${v.added_from_rules}${v.summary_replaced ? '; сводка заменена шаблонной' : ''}.</p>` : '';
   return `${a.recommendations.length ? a.recommendations.map(recCard).join('') : empty('Замечаний нет', 'Правила не нашли рисков для этой группы на этот день.')}${check}
@@ -434,7 +434,7 @@ function tabGroup() {
 function tabWeather() {
   const t = S.trip, a = t.audit;
   const map = `<div class="card pad"><h3>${icon('route')}${esc(routeOf(t).name)}</h3><div id="trip-map"><p class="loading">Загружаем карту…</p></div></div>`;
-  if (!a) return map + empty('Прогноз появится после проверки', 'TAU запросит прогноз на дату похода для старта и верхней точки маршрута.', `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>`);
+  if (!a) return map + empty('Прогноз появится после проверки', 'GoTAU запросит прогноз на дату похода для старта и верхней точки маршрута.', `<button class="btn" data-act="audit">${icon('shield')}Проверить готовность</button>`);
   if (!a.weather.available) return map + noWeather(a.weather.reason) + '<p class="note">Погодные риски в этой проверке не оценивались. Прогноз доступен не более чем на 15 дней вперёд: повторите проверку ближе к дате.</p>';
   return `${map}<div class="card pad"><h3>Хватит ли светлого времени</h3>${timeline(a.weather, t.start_time, a.estimate.finish_time, t.return_time)}<p class="note">Время в пути — оценка по длине, набору высоты и составу группы, с запасом на привалы.</p></div>
     <h3 class="sub">Прогноз на ${niceDate(t.start_date)}</h3>${weatherCards(a.weather)}`;
@@ -445,8 +445,8 @@ function tabShare() {
   return `<div class="card pad"><h3>${icon('share')}Ссылка для близких</h3><p>По ссылке видны маршрут, время, статус группы, имя организатора и сводка подготовки. Имена остальных участников, телефоны и списки вещей не показываются. Ссылка перестаёт работать через 48 часов после контрольного времени.</p>
       ${t.share ? `<div class="copyrow"><input readonly value="${esc(link)}" aria-label="Ссылка для близких"><button class="btn small" data-act="copy" data-text="${esc(link)}">${icon('copy')}Копировать</button></div><div class="row"><a class="text" href="${esc(link)}" target="_blank" rel="noopener">Открыть, как увидят близкие ${icon('right')}</a><button class="text danger" data-act="share" data-value="revoke">Отозвать ссылку</button></div>` : `<button class="btn outline" data-act="share" data-value="create">${icon('share')}Создать ссылку</button>`}
       <p class="note">${t.confirmed ? 'Паспорт подтверждён: сводка видна по ссылке.' : 'Сводка появится по ссылке после того, как вы подтвердите паспорт.'} Автоматических SMS и звонков нет. Сервер прототипа работает только на этом компьютере, поэтому с другого устройства ссылка не откроется.</p></div>
-    ${a ? `<div class="card pad"><h3>${icon('doc')}Сводка подготовки</h3><blockquote>${named(a.summary)}</blockquote><p class="note">${a.mode === 'ai' ? 'Текст составил ИИ по обезличенным данным и прогнозу, правила TAU его проверили.' : 'Текст собран по правилам TAU, без ИИ.'} Близким он показывается без имён.</p></div>` : ''}
-    <div class="card pad"><h3>${icon('doc')}Уведомление для ДЧС</h3><p>Туристы заранее сообщают в департамент по чрезвычайным ситуациям о выходе в горы. TAU собирает текст из паспорта, а отправляете его вы сами.</p><button class="btn outline" data-act="notice">Собрать текст уведомления</button><div id="notice"></div></div>
+    ${a ? `<div class="card pad"><h3>${icon('doc')}Сводка подготовки</h3><blockquote>${named(a.summary)}</blockquote><p class="note">${a.mode === 'ai' ? 'Текст составил ИИ по обезличенным данным и прогнозу, правила GoTAU его проверили.' : 'Текст собран по правилам GoTAU, без ИИ.'} Близким он показывается без имён.</p></div>` : ''}
+    <div class="card pad"><h3>${icon('doc')}Уведомление для ДЧС</h3><p>Туристы заранее сообщают в департамент по чрезвычайным ситуациям о выходе в горы. GoTAU собирает текст из паспорта, а отправляете его вы сами.</p><button class="btn outline" data-act="notice">Собрать текст уведомления</button><div id="notice"></div></div>
     ${tr ? `<div class="card pad"><h3>${icon('car')}Как добраться до старта</h3><p><b>${esc(tr.vehicle)}.</b> Нужно мест: ${tr.seats_needed} (людей — ${tr.people}, крупного груза — ${tr.bulky_items}). ${named(tr.note)}</p><label class="field split">Стоимость поездки на всех, ₸<input id="price" type="number" min="0" step="500" inputmode="numeric" placeholder="например, 30000"></label><p id="per-person" class="per"></p><p class="note">Это расчёт, а не заказ: бронирование транспорта не подключено.</p></div>` : ''}`;
 }
 function renderTrip() {
@@ -544,7 +544,7 @@ async function route() {
 window.addEventListener('hashchange', route);
 (async () => {
   try { S.routes = await api('/api/routes'); }
-  catch (error) { view.innerHTML = empty('Сервер TAU не отвечает', 'Запустите его командой py app.py и обновите страницу.'); return; }
+  catch (error) { view.innerHTML = empty('Сервер GoTAU не отвечает', 'Запустите его командой py app.py и обновите страницу.'); return; }
   try { S.ai = await api('/api/ai-status'); } catch (error) { /* без статуса ИИ интерфейс работает в режиме правил */ }
   route();
 })();

@@ -29,7 +29,7 @@ MIRRORS = (OVERPASS, 'https://overpass.kumi.systems/api/interpreter', 'https://o
 def overpass(query):
     last = None
     for attempt, url in enumerate(MIRRORS):
-        request = urllib.request.Request(url, data=urllib.parse.urlencode({'data': query}).encode(), headers={'User-Agent': 'TAU-prototype (student project)'})
+        request = urllib.request.Request(url, data=urllib.parse.urlencode({'data': query}).encode(), headers={'User-Agent': 'GoTAU-prototype (student project)'})
         try:
             with urllib.request.urlopen(request, timeout=180) as response:
                 return json.load(response)
@@ -43,7 +43,7 @@ def overpass(query):
 def relation_full(rel_id):
     """Геометрия отношения из основного API OpenStreetMap (/relation/<id>/full) в том же виде, что даёт Overpass «out geom»."""
     import xml.etree.ElementTree as ET
-    request = urllib.request.Request(f'https://api.openstreetmap.org/api/0.6/relation/{rel_id}/full', headers={'User-Agent': 'TAU-prototype (student project)'})
+    request = urllib.request.Request(f'https://api.openstreetmap.org/api/0.6/relation/{rel_id}/full', headers={'User-Agent': 'GoTAU-prototype (student project)'})
     with urllib.request.urlopen(request, timeout=60) as response:
         root = ET.fromstring(response.read())
     nodes = {n.get('id'): (float(n.get('lat')), float(n.get('lon'))) for n in root.iter('node')}
@@ -117,7 +117,7 @@ def main():
             'tag': f'{route_from} → {route_to}' if route_from and route_to else ('Кольцевой маршрут' if s['loop'] else 'Маршрут из OpenStreetMap'),
             'lat': s['start'][0], 'lon': s['start'][1], 'top_lat': s['top'][0], 'top_lon': s['top'][1],
             'start_elev': s['start_elev'], 'max_elev': s['max_elev'],
-            'description': (tags.get('description', '') + ' ' if tags.get('description') else '') + 'Маршрут из открытых данных OpenStreetMap. Длина, набор высоты и сложность посчитаны TAU по треку и модели рельефа; на местности трек не проверялся.'
+            'description': (tags.get('description', '') + ' ' if tags.get('description') else '') + 'Маршрут из открытых данных OpenStreetMap. Длина, набор высоты и сложность посчитаны GoTAU по треку и модели рельефа; на местности трек не проверялся.'
                            + (f' В OpenStreetMap трек разорван на {s["segments"]} части, поэтому длина и набор могут быть занижены.' if s['segments'] > 1 else ''),
             'source': 'osm', 'source_url': f'https://www.openstreetmap.org/relation/{rel["id"]}', 'has_track': True,
         })

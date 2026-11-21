@@ -1,4 +1,4 @@
-"""TAU — прототип «Паспорта похода» с AI-аудитором готовности. Python 3.10+.
+"""GoTAU — прототип «Паспорта похода» с AI-аудитором готовности. Python 3.10+.
 
 Сервер работает на стандартной библиотеке. Пакет anthropic нужен только для ИИ-режима:
 без него и без ключа аудит выполняется движком правил.
@@ -53,7 +53,7 @@ PROPOSAL_STATUS = {'pending': 'На модерации', 'approved': 'Одобр
 
 
 def load_catalog():
-    """Каталог = ручной список TAU + маршруты OpenStreetMap (если импорт выполнен) + одобренные предложения."""
+    """Каталог = ручной список GoTAU + маршруты OpenStreetMap (если импорт выполнен) + одобренные предложения."""
     global ROUTES
     ROUTES = [r for r in ROUTES if r['source'] == 'tau']
     ROUTE_BY_ID.clear()
@@ -87,7 +87,7 @@ def proposal_route(row):
             'level': tau_geo.level_for(s['distance_km'], s['ascent_m'], s['max_elev']), 'className': 'green' if row['activity'] == 'hiking' else 'orange',
             'tag': 'Маршрут от пользователя', 'lat': s['start'][0], 'lon': s['start'][1], 'top_lat': s['top'][0], 'top_lon': s['top'][1],
             'start_elev': s['start_elev'], 'max_elev': s['max_elev'],
-            'description': (row['description'] + ' ' if row['description'] else '') + 'Трек прислал пользователь, модератор TAU его одобрил. Цифры посчитаны по треку и модели рельефа.',
+            'description': (row['description'] + ' ' if row['description'] else '') + 'Трек прислал пользователь, модератор GoTAU его одобрил. Цифры посчитаны по треку и модели рельефа.',
             'source': 'user', 'has_track': True, 'terrain': track['terrain']}
 
 
@@ -124,7 +124,7 @@ def proposal_checks(name, description, stats, terrain, claimed_km):
     if claimed_km and abs(claimed_km - stats['distance_km']) > max(1.0, 0.25 * stats['distance_km']):
         add('warning', f'Автор указал {claimed_km:g} км, а по треку {stats["distance_km"]:g} км.')
     if stats['distance_km'] > 40:
-        add('info', 'Маршрут длиннее 40 км: скорее всего, многодневный. Проверка готовности TAU рассчитана на однодневные выходы.')
+        add('info', 'Маршрут длиннее 40 км: скорее всего, многодневный. Проверка готовности GoTAU рассчитана на однодневные выходы.')
     if terrain['km_slope_45_plus'] > 0:
         add('warning', f'Есть участки на склонах круче 45° ({terrain["km_slope_45_plus"]:g} км): возможно, скалы. Нужна оценка опытного человека.')
     elif terrain['km_slope_30_45'] > 0:
@@ -381,7 +381,7 @@ class Handler(BaseHTTPRequestHandler):
             if not row:
                 return self.send_body(404, {'error': 'Поход не найден'})
             if match.group(2):
-                return self.send_body(200, {'text': notice_text(row), 'channels': 'Отправьте сами: приложение eQonaq, электронная почта ДЧС вашего региона или телефон 112. В Алматы маршрут также можно зарегистрировать на платформе Almaty Hike (almatyhike.kz). TAU ничего не отправляет в МЧС.'})
+                return self.send_body(200, {'text': notice_text(row), 'channels': 'Отправьте сами: приложение eQonaq, электронная почта ДЧС вашего региона или телефон 112. В Алматы маршрут также можно зарегистрировать на платформе Almaty Hike (almatyhike.kz). GoTAU ничего не отправляет в МЧС.'})
             return self.send_body(200, trip_full(row))
         match = re.fullmatch(r'/api/share/([\w-]{10,60})', path)
         if match:
@@ -400,7 +400,7 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/p/[\w-]{10,60}', path):
             return self.send_body(200, (ROOT / 'static' / 'share.html').read_bytes(), 'text/html; charset=utf-8')
         static = {'/': ('index.html', 'text/html; charset=utf-8'), '/static/style.css': ('style.css', 'text/css; charset=utf-8'), '/static/app.js': ('app.js', 'text/javascript; charset=utf-8'),
-                  '/static/share.js': ('share.js', 'text/javascript; charset=utf-8'), '/static/icon.svg': ('icon.svg', 'image/svg+xml'),
+                  '/static/share.js': ('share.js', 'text/javascript; charset=utf-8'), '/static/icon.svg': ('icon.svg', 'image/svg+xml'), '/static/logo.png': ('logo.png', 'image/png'),
                   '/static/vendor/leaflet.js': ('vendor/leaflet.js', 'text/javascript; charset=utf-8'), '/static/vendor/leaflet.css': ('vendor/leaflet.css', 'text/css; charset=utf-8')}
         if path in static:
             filename, mime = static[path]

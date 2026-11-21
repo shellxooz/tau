@@ -65,7 +65,7 @@ class ServerTestCase(unittest.TestCase):
 
 class ApplicationTests(ServerTestCase):
     def test_pages_and_route_catalog(self):
-        for path in ['/', '/static/style.css', '/static/app.js', '/static/share.js', '/static/icon.svg']:
+        for path in ['/', '/static/style.css', '/static/app.js', '/static/share.js', '/static/icon.svg', '/static/logo.png']:
             self.assertEqual(self.request(path)[0], 200)
         routes = self.call('/api/routes')[1]
         self.assertEqual(sum(r['source'] == 'tau' for r in routes), 15)
@@ -184,7 +184,7 @@ class ApplicationTests(ServerTestCase):
         self.assertEqual(self.call(f'/api/trips/{trip_id}/status', {'status': 'flying'})[0], 400)
         notice = self.call(f'/api/trips/{trip_id}/notice')[1]
         self.assertIn('Дана Примерова', notice['text'])
-        self.assertIn('TAU ничего не отправляет', notice['channels'])
+        self.assertIn('GoTAU ничего не отправляет', notice['channels'])
         self.assertEqual(self.call(f'/api/trips/{trip_id}/delete', {})[0], 200)
         self.assertEqual(self.call(f'/api/trips/{trip_id}')[0], 404)
 
